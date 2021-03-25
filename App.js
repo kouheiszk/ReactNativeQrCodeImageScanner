@@ -6,13 +6,40 @@
  * @flow strict-local
  */
 
-import type { Node } from "react";
-import React, { useCallback } from "react";
-import { Pressable, SafeAreaView, StyleSheet, Text } from "react-native";
+import type { Node } from 'react';
+import React, { useCallback } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text } from 'react-native';
+import { NativeModules } from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+
+const { RNQrCodeScanner } = NativeModules;
+
+function toFilePath(uri: string) {
+  let filePath = uri.replace('file://', '');
+  if (filePath.includes('%')) {
+    filePath = decodeURIComponent(filePath);
+  }
+  return filePath;
+}
 
 const App: () => Node = () => {
-  const handleButtonClick = useCallback(() => {
-    console.log('hoge');
+  const handleButtonClick = useCallback(async() => {
+    // await RNQrCodeScanner.scanQrCodeUrl(filePath);
+    launchImageLibrary({ mediaType: 'photo' }, async response => {
+      const uri = response.uri;
+      if (!uri) {
+        return;
+      }
+
+      const filePath = toFilePath(uri);
+
+      try {
+        const url = await RNQrCodeScanner.scanQrCodeUrl(filePath);
+        console.log(url);
+      } catch (err) {
+        console.error(err);
+      }
+    });
   }, []);
 
   return (

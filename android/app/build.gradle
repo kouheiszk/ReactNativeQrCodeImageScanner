@@ -210,6 +210,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    implementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:16.1.4'
 }
 
 // Run this once to be able to run the application with BUCK
